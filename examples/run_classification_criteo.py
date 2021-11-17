@@ -3,6 +3,8 @@ from sklearn.metrics import log_loss, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from deepctr.models import DeepFM
+from deepctr.optimizers.lamb import LAMB
+from deepctr.optimizers.vr_lamb import VRLAMB
 from deepctr.feature_column import SparseFeat, DenseFeat, get_feature_names
 import tensorflow as tf
 import tensorflow_addons as tfa
@@ -44,7 +46,9 @@ if __name__ == "__main__":
     # 3.5 configure optimizer
     # optimizer = "adam"
     # optimizer = tf.keras.optimizers.Adam()
-    optimizer = tfa.optimizers.LAMB()
+    # optimizer = tfa.optimizers.LAMB()
+    # optimizer = LAMB()
+    optimizer = VRLAMB()
 
     # 4.Define Model,train,predict and evaluate
     model = DeepFM(linear_feature_columns, dnn_feature_columns, task='binary')
