@@ -2,9 +2,10 @@ import pandas as pd
 from sklearn.metrics import log_loss, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
-
 from deepctr.models import DeepFM
 from deepctr.feature_column import SparseFeat, DenseFeat, get_feature_names
+import tensorflow as tf
+import tensorflow_addons as tfa
 
 if __name__ == "__main__":
     data = pd.read_csv('./criteo_sample.txt')
@@ -40,9 +41,14 @@ if __name__ == "__main__":
     train_model_input = {name: train[name] for name in feature_names}
     test_model_input = {name: test[name] for name in feature_names}
 
+    # 3.5 configure optimizer
+    # optimizer = "adam"
+    # optimizer = tf.keras.optimizers.Adam()
+    optimizer = tfa.optimizers.LAMB()
+
     # 4.Define Model,train,predict and evaluate
     model = DeepFM(linear_feature_columns, dnn_feature_columns, task='binary')
-    model.compile("adam", "binary_crossentropy",
+    model.compile(optimizer, "binary_crossentropy",
                   metrics=['binary_crossentropy'], )
 
     history = model.fit(train_model_input, train[target].values,
